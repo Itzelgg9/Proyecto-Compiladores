@@ -1,0 +1,36 @@
+import re
+
+# Expresiones regulares para tokens
+TOKENS = [
+    ('NUMERO', r'\d+'),          # Número entero
+    ('SUMA', r'\+'),             # Suma
+    ('RESTA', r'-'),             # Resta
+    ('MULTIPLICACION', r'\*'),   # Multiplicación
+    ('DIVISION', r'/'),          # División
+    ('PARENTESIS_IZQ', r'\('),   # Paréntesis izquierdo
+    ('PARENTESIS_DER', r'\)'),  # Paréntesis derecho
+    ('ESPACIO', r'\s+'),         # Espacio en blanco
+
+]
+
+def lexer(input_string):
+    tokens = []
+    position = 0
+    while position < len(input_string):
+        match = None
+        for token_type, pattern in TOKENS:
+            regex = re.compile(pattern)
+            match = regex.match(input_string, position)
+            if match:
+                value = match.group(0)
+                tokens.append((token_type, value))
+                position = match.end(0)
+                break
+        if not match:
+            raise ValueError(f'Carácter no válido: {input_string[position]}')
+    return tokens
+
+
+input_string = '3 + 4 * ( 2 - 1 ) / 5'
+tokens = lexer(input_string)
+print(tokens)
